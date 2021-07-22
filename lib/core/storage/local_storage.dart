@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:q8uc/core/model/item.dart';
 import 'package:q8uc/core/model/login_model.dart';
+import 'package:q8uc/core/model/serial_model.dart';
 import 'package:q8uc/ui/widgets/snackbar.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';

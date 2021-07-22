@@ -187,7 +187,8 @@ class _UsageScreenState extends State<UsageScreen> {
               ],
             ),
           ),
-        ));
+        )
+        );
   }
 
   Widget buildAppBar(BuildContext context) {

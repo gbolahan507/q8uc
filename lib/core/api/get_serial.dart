@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 import 'package:q8uc/core/model/error_model.dart';
+import 'package:q8uc/core/model/history_model.dart';
 import 'package:q8uc/core/model/item.dart';
 import 'package:q8uc/core/model/coupon_model.dart';
+import 'package:q8uc/core/model/serial_model.dart';
 import 'package:q8uc/ui/constants/messages.dart';
 import 'package:q8uc/utils/custom_exception.dart';
 import 'package:q8uc/utils/error_util.dart';
@@ -56,19 +58,19 @@ class SerialApi extends BaseAPI {
   SerialResponse serialResponse;
 
   Future<SerialResponse> checkOut(
-    String productId,
     String customerId,
+    String productId,
   ) async {
     var formData = FormData();
     formData.fields.addAll([
-      MapEntry("product_id", productId),
       MapEntry("customer_id", customerId),
+      MapEntry("product_id_and_quantity", productId),
     ]);
 
     try {
       final Response<Map<String, dynamic>> response =
           await Dio().post<Map<String, dynamic>>(
-        "$baseUrl/assign_serial_number_to_user_v2.php/",
+        "$baseUrl/assign_serial_number_to_user_with_quantity_v2.php/",
         data: formData,
         options: defaultOptions,
       );
@@ -90,7 +92,7 @@ class SerialApi extends BaseAPI {
     } catch (e) {}
   }
 
-  Future<SerialResponse> getOrderHistory(
+  Future<HistoryModel> getOrderHistory(
     String customerId,
   ) async {
     var formData = FormData();
@@ -107,7 +109,7 @@ class SerialApi extends BaseAPI {
 
       switch (response.data["status"]) {
         case SERVER_OKAY:
-          return SerialResponse.fromJson(response.data);
+          return HistoryModel.fromJson(response.data);
           break;
         case WRONG_SERVER:
           throw NO_SERIAL;
@@ -155,8 +157,6 @@ class SerialApi extends BaseAPI {
     }
   }
 
-
-
   CouponModel couponModel;
 
   Future<CouponModel> checkCoupon2(
@@ -183,5 +183,4 @@ class SerialApi extends BaseAPI {
     } catch (e) {}
     return couponModel;
   }
-
 }

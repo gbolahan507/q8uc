@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:q8uc/core/api/get_serial.dart';
 import 'package:q8uc/core/model/item.dart';
+import 'package:q8uc/core/model/serial_model.dart';
 import 'package:q8uc/core/storage/local_storage.dart';
 import 'package:q8uc/core/view_models/serial_vm.dart';
 import 'package:q8uc/ui/screens/navigation_screen.dart';
@@ -32,14 +33,29 @@ class _ReceitScreenState extends State<ReceitScreen> {
   SerialViewModel model;
   SerialApi serialApi;
 
+  List serialNumber = [];
   TextEditingController field = TextEditingController();
   List<SerialResponse> seria = <SerialResponse>[];
+
+  Future futureCheckout;
+  SerialResponse serialResponse;
+
+  getCheckout(SerialResponse serialResponse) async {
+    return await serialApi.checkOut(
+      // '68',
+      // '191b07af5d388b6d4a33c4da6312eb2b-1,39dc5563dbc51751f968c6e0f847d901-2'
+      AppCache.getUser().custormerId.toString(),
+      widget.itemid,
+    );
+  }
 
   @override
   void initState() {
     model = SerialViewModel();
     serialApi = SerialApi();
     super.initState();
+    serialResponse = SerialResponse();
+    futureCheckout = getCheckout(serialResponse);
   }
 
   @override
@@ -76,161 +92,210 @@ class _ReceitScreenState extends State<ReceitScreen> {
             onPressed: () => routeTo(context, ButtomNavScreen()),
           ),
         ),
-        body: FutureBuilder<SerialResponse>(
-            future: serialApi.checkOut(
-                widget.itemid,
-                AppCache.getUser().custormerId.toString()),
+        body: FutureBuilder(
+            future: futureCheckout,
             builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                final SerialResponse posts = snapshot.data;
-                return Container(
-                    color: Styles.colorLightPink,
-                    padding: MediaQuery.of(context).viewInsets,
-                    child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: ListView(children: <Widget>[
-                          verticalSpaceSmall,
-                          posts.data.isEmpty
-                              ? Center(
-                                  child: CustomText(
-                                    'Bag is Empty!',
+              final SerialResponse posts = snapshot.data;
+              switch (snapshot.connectionState) {
+                case ConnectionState.waiting:
+                  return new Center(
+                    child: new Column(
+                      children: <Widget>[
+                        new Padding(padding: new EdgeInsets.all(50.0)),
+                        new CircularProgressIndicator(),
+                      ],
+                    ),
+                  );
+                default:
+                  if (snapshot.hasData) {
+                    return Container(
+                        color: Styles.colorLightPink,
+                        padding: MediaQuery.of(context).viewInsets,
+                        child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: ListView(children: <Widget>[
+                              verticalSpaceSmall,
+                              Column(
+                                children: [
+                                  CustomText(
+                                    'Order Details',
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
-                                    color: Styles.colorWhite,
+                                    color: Styles.colorDeepGreen,
                                   ),
-                                )
-                              : Column(
-                                  children: [
-                                    CustomText(
-                                      'Order Details',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: Styles.appBackground1,
+                                  verticalSpaceSmall,
+                                  Container(
+                                    padding: EdgeInsets.only(top: 12),
+                                    decoration: BoxDecoration(
+                                      color: Styles.colorWhite,
+                                      boxShadow: <BoxShadow>[
+                                        BoxShadow(
+                                            color: Styles.colorGreyLight,
+                                            blurRadius: 4),
+                                      ],
                                     ),
-                                    verticalSpaceSmall,
-                                    Container(
-                                      padding: EdgeInsets.only(top: 12),
-                                      decoration: BoxDecoration(
-                                        color: Styles.colorWhite,
-                                        boxShadow: <BoxShadow>[
-                                          BoxShadow(
-                                              color: Styles.colorGreyLight,
-                                              blurRadius: 4),
-                                        ],
-                                      ),
-                                      child: Column(
-                                        children: [
-                                          ListView.builder(
-                                              shrinkWrap: true,
-                                              physics:
-                                                  NeverScrollableScrollPhysics(),
-                                              itemCount: posts.data.length,
-                                              itemBuilder: (context, index) {
-                                                return bagItem(
-                                                  context,
-                                                  index,
-                                                  '${posts.data[index].productImgPath}',
-                                                  '${posts.data[index].productName}',
-                                                  '${posts.data[index].productPrice}',
-                                                  '${posts.data[index].serialNumber}',
-                                                );
-                                              }),
-                                          Container(
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 10, horizontal: 12),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: <Widget>[
-                                                CustomText('Discount',
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Styles.colorBlack),
-                                                CustomText(
-                                                    '\$${widget.discount}',
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Styles.red),
-                                              ],
-                                            ),
+                                    child: Column(
+                                      children: [
+                                        ListView.builder(
+                                            shrinkWrap: true,
+                                            physics:
+                                                NeverScrollableScrollPhysics(),
+                                            itemCount: posts.data.length,
+                                            itemBuilder: (context, index) {
+                                              return bagItem(
+                                                context,
+                                                index,
+                                                '${posts.data[index].productImgPath}',
+                                                '${posts.data[index].productName}',
+                                                '${posts.data[index].unitProductPrice}',
+                                              );
+                                            }),
+                                        Container(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 10, horizontal: 12),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: <Widget>[
+                                              CustomText('Discount',
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Styles.colorBlack),
+                                              CustomText('\$${widget.discount}',
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Styles.colorLightBlue),
+                                            ],
                                           ),
-                                          Container(
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 10, horizontal: 12),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: <Widget>[
-                                                CustomText('Total',
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Styles.colorBlack),
-                                                CustomText(
-                                                    '\$${widget.totalAmount}',
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Styles.red),
-                                              ],
-                                            ),
+                                        ),
+                                        Container(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 10, horizontal: 12),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: <Widget>[
+                                              CustomText('Total',
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Styles.colorBlack),
+                                              CustomText(
+                                                  '\$${widget.totalAmount}',
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Styles.colorDeepGreen),
+                                            ],
                                           ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
-                                    verticalSpaceMedium,
-                                    CustomText(
-                                      'Serial Number',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: Styles.appBackground1,
+                                  ),
+                                  verticalSpaceMedium,
+                                  CustomText(
+                                    'Serial Number',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Styles.colorDeepGreen,
+                                  ),
+                                  verticalSpaceSmall,
+                                  Container(
+                                    padding: EdgeInsets.only(
+                                        top: 12, left: 20, right: 20),
+                                    decoration: BoxDecoration(
+                                      color: Styles.colorWhite,
+                                      boxShadow: <BoxShadow>[
+                                        BoxShadow(
+                                            color: Styles.colorGreyLight,
+                                            blurRadius: 4),
+                                      ],
                                     ),
-                                    verticalSpaceSmall,
-                                    Container(
-                                      padding: EdgeInsets.only(top: 12),
-                                      decoration: BoxDecoration(
-                                        color: Styles.colorWhite,
-                                        boxShadow: <BoxShadow>[
-                                          BoxShadow(
-                                              color: Styles.colorGreyLight,
-                                              blurRadius: 4),
-                                        ],
-                                      ),
-                                      child: Column(
-                                        children: [
-                                          ListView.builder(
-                                              shrinkWrap: true,
-                                              physics:
-                                                  NeverScrollableScrollPhysics(),
-                                              itemCount: posts.data.length,
-                                              itemBuilder: (context, index) {
-                                                return serialBag(
-                                                  context,
-                                                  index,
-                                                  '${posts.data[index].productImgPath}',
-                                                  '${posts.data[index].productName}',
-                                                  '${posts.data[index].productPrice}',
-                                                  '${posts.data[index].serialNumber}',
-                                                );
-                                              }),
-                                        ],
-                                      ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: List.generate(posts.data.length,
+                                          (index) {
+                                        final title =
+                                            posts.data[index].productName;
+                                        final sn =
+                                            posts.data[index].serialNumbers;
+                                        return Padding(
+                                          padding:
+                                              const EdgeInsets.only(bottom: 12),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              CustomText(
+                                                title.toString(),
+                                                color: Styles.colorBlack,
+                                                fontSize: 12,
+                                              ),
+                                              horizontalSpaceSmall,
+                                              horizontalSpaceMedium,
+                                              Expanded(
+                                                  child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  CustomText(
+                                                    sn.toString(),
+                                                    color:
+                                                        Styles.appBackground1,
+                                                    fontSize: 13,
+                                                    topMargin: 10,
+                                                  ),
+                                                ],
+                                              )),
+                                            ],
+                                          ),
+                                        );
+                                      }),
                                     ),
-                                  ],
-                                ),
-                          SizedBox(height: screenAwareSize(20, context)),
-                        ])));
-              } else if (snapshot.hasError) {
-                return Text('error');
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: screenAwareSize(20, context)),
+                            ])));
+                  } else {
+                    return Center(
+                      child: new Column(
+                        children: <Widget>[
+                          new Padding(padding: new EdgeInsets.all(50.0)),
+                          verticalSpaceLarge,
+                          verticalSpaceLarge,
+                          verticalSpaceLarge,
+                          Center(
+                            child: new CustomText(
+                              'No order has been made',
+                              color: Styles.colorWhite,
+                            ),
+                          ),
+                          verticalSpaceMedium,
+                          InkWell(
+                            onTap: () {
+                              routeTo(context, ButtomNavScreen());
+                            },
+                            child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 10),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    color: Styles.colorRed),
+                                child: CustomText(
+                                  'Home',
+                                  fontSize: 12,
+                                  color: Styles.colorWhite,
+                                )),
+                          )
+                        ],
+                      ),
+                    );
+                  }
               }
-              return new Center(
-                child: new Column(
-                  children: <Widget>[
-                    new Padding(padding: new EdgeInsets.all(50.0)),
-                    new CircularProgressIndicator(),
-                  ],
-                ),
-              );
             }));
   }
 
@@ -246,8 +311,13 @@ class _ReceitScreenState extends State<ReceitScreen> {
     );
   }
 
-  Widget bagItem(BuildContext context, int index, String imageUrl, String name,
-      String price, String serialNumber) {
+  Widget bagItem(
+    BuildContext context,
+    int index,
+    String imageUrl,
+    String name,
+    String price,
+  ) {
     return Container(
       child: Padding(
           padding: EdgeInsets.only(
@@ -274,14 +344,12 @@ class _ReceitScreenState extends State<ReceitScreen> {
                   CustomText(
                     '$name',
                     fontSize: 13,
-                    fontWeight: FontWeight.bold,
                     color: Styles.colorBlack,
                   ),
                   Spacer(),
                   CustomText(
                     '\$$price',
                     fontSize: 13,
-                    fontWeight: FontWeight.bold,
                     color: Styles.colorBlack,
                   )
                 ],
@@ -293,7 +361,7 @@ class _ReceitScreenState extends State<ReceitScreen> {
   }
 
   Widget serialBag(BuildContext context, int index, String imageUrl,
-      String name, String price, String serialNumber) {
+      String name, String price, String serialNumber, int total) {
     return Container(
       child: Padding(
           padding: EdgeInsets.only(
@@ -311,20 +379,26 @@ class _ReceitScreenState extends State<ReceitScreen> {
                   ),
                   // Spacer(),
                   horizontalSpaceMedium,
+
                   Expanded(
-                    child: SelectableText('$serialNumber',
-                        style: TextStyle(
-                            color: Styles.colorRed,
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold),
-                        cursorColor: Colors.red,
-                        showCursor: true,
-                        toolbarOptions: ToolbarOptions(
-                            copy: true,
-                            selectAll: true,
-                            cut: true,
-                            paste: false)),
+                    child: Column(
+                      children: List.generate(total, (index) {
+                        return SelectableText('$serialNumber',
+                            style: TextStyle(
+                                color: Styles.colorRed,
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold),
+                            cursorColor: Colors.red,
+                            showCursor: true,
+                            toolbarOptions: ToolbarOptions(
+                                copy: true,
+                                selectAll: true,
+                                cut: true,
+                                paste: false));
+                      }),
+                    ),
                   ),
+
                   horizontalSpaceMedium,
                   CustomIcon(
                     icon: Icons.share,

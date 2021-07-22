@@ -12,12 +12,15 @@ import 'package:q8uc/ui/styles/spacing.dart';
 import 'package:q8uc/ui/styles/styles.dart';
 import 'package:q8uc/ui/widgets/connect.dart';
 import 'package:q8uc/ui/widgets/custom_button.dart';
+import 'package:q8uc/ui/widgets/custom_icon.dart';
 import 'package:q8uc/ui/widgets/custom_text_widget.dart';
+import 'package:q8uc/ui/widgets/custom_textspan_widget.dart';
 import 'package:q8uc/ui/widgets/size_calculator.dart';
 import 'package:q8uc/utils/base_view.dart';
 import 'package:q8uc/utils/progressHud.dart';
 import 'package:q8uc/utils/router.dart';
 import 'package:q8uc/utils/util.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../main.dart';
 
@@ -46,6 +49,13 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
   var price = 0.0;
   var discount = 0.0;
   var phone = "+96550067637";
+  bool showmore = false;
+
+  var _url = 'https://www.midasbuy.com/kw/redeem/pubgm';
+
+  void _launchURL() async => await canLaunch(_url)
+      ? await launch(_url)
+      : throw 'Could not launch $_url';
 
   @override
   void initState() {
@@ -141,135 +151,275 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                       ],
                     ),
                     verticalSpaceSmall,
-                    AddToCart(
-                      title: 'ADD TO CART',
-                      onPressed: () async {
-                        try {
-                          setState(() {
-                            model.setBusy(true);
-                          });
-                          await serialApi
-                              .checkSerialNumber(item.id)
-                              .then((ret) {
-                            if (ret) {
-                              model.setBusy(false);
-                              doneDialog(context);
-                            } else {
-                              model.setBusy(false);
-                              failDialog(context);
-                              model.setBusy(false);
-                            }
-                          });
-                        } catch (e) {}
-                      },
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                              vertical: screenAwareSize(4, context),
+                              horizontal: screenAwareSize(12, context)),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(
+                                  screenAwareSize(8, context)),
+                              color: Styles.colorWhite,
+                              border: Border.all(
+                                  color: Styles.colorRed, width: 1.5)),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              InkWell(
+                                onTap: () {
+                                  if (numberOf < 10 && numberOf > 1) {
+                                    numberOf--;
+                                  }
+                                  setState(() {});
+                                },
+                                child: Icon(
+                                  Icons.remove,
+                                  size: screenAwareSize(20, context),
+                                  color: Styles.colorBlack,
+                                ),
+                              ),
+                              CustomText(
+                                numberOf.toString(),
+                                leftMargin: 10,
+                                rightMargin: 10,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Styles.colorBlack,
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  if (numberOf < 9 && numberOf > 0) {
+                                    numberOf++;
+                                  }
+                                  setState(() {});
+                                },
+                                child: Icon(
+                                  Icons.add,
+                                  size: screenAwareSize(20, context),
+                                  color: Styles.colorBlack,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        horizontalSpaceMedium,
+                        AddToCart(
+                          title: 'ADD TO CART',
+                          onPressed: () async {
+                            try {
+                              setState(() {
+                                model.setBusy(true);
+                              });
+                              await serialApi
+                                  .checkSerialNumber(item.id)
+                                  .then((ret) {
+                                if (ret) {
+                                  model.setBusy(false);
+                                  doneDialog(context);
+                                } else {
+                                  model.setBusy(false);
+                                  failDialog(context);
+                                  model.setBusy(false);
+                                }
+                              });
+                            } catch (e) {}
+                          },
+                        ),
+                      ],
                     ),
-                    // verticalSpaceLarge,
-                    // Row(
-                    //   children: [
-                    //     Expanded(
-                    //       child: Padding(
-                    //         padding: const EdgeInsets.only(left: 20),
-                    //         child: CustomTextField(
-                    //           fillColor: Styles.colorDeepPink.withOpacity(0.2),
-                    //           maxLines: 1,
-                    //           title: '  Coupon code (optional)',
-                    //           controller: couponCodeController,
-                    //           hintText: 'Coupon code(optional)',
-                    //         ),
-                    //       ),
-                    //     ),
-                    //     horizontalSpaceMedium,
-                    //     // horizontalSpaceMedium,
-                    //     // horizontalSpaceMedium,
-                    //     Padding(
-                    //       padding: const EdgeInsets.only(right: 20),
-                    //       child: Column(
-                    //         children: [
-                    //           SizedBox(
-                    //             height: 25,
-                    //           ),
-                    //           Checkbox(
-                    //               value: checkCoupon,
-                    //               onChanged: (onChanged) async {
-                    //                 checkCoupon = onChanged;
-                    //                 if (checkCoupon) {
-                    //                   try {
-                    //                     await serialViewModel
-                    //                         .checkCoupon2(
-                    //                             couponCodeController.text)
-                    //                         .then((respone) => {
-                    //                               if (respone.status == 200)
-                    //                                 {
-                    //                                   price = double.parse(
-                    //                                           item.price) -
-                    //                                       double.parse(AppCache
-                    //                                               .getCoupon()
-                    //                                           .discountAmount),
-                    //                                   discount = double.parse(
-                    //                                       AppCache.getCoupon()
-                    //                                           .discountAmount)
-                    //                                 }
-                    //                               else
-                    //                                 {
-                    //                                   price = double.parse(
-                    //                                           item.price) +
-                    //                                       0.0,
-                    //                                 }
-                    //                             });
-                    //                   } catch (e) {}
-                    //                 } else {
-                    //                   {
-                    //                     price = double.parse(item.price) + 0.0;
-
-                    //                     discount = double.parse(
-                    //                             AppCache.getCoupon()
-                    //                                 .discountAmount) -
-                    //                         double.parse(AppCache.getCoupon()
-                    //                             .discountAmount);
-                    //                     print(discount.toString());
-                    //                   }
-                    //                 }
-                    //                 setState(() {});
-                    //               }),
-                    //         ],
-                    //       ),
-                    //     )
-                    //   ],
-                    // ),
-                    // verticalSpaceMedium,
-                    // verticalSpaceMedium,
-                    // Padding(
-                    //   padding: const EdgeInsets.symmetric(horizontal: 20),
-                    //   child: CustomButton(
-                    //     title: 'CHECK OUT',
-                    //     buttonColor: Styles.colorDeepGreen,
-                    //     height: 50,
-                    //     fontSize: 10,
-                    //     onPressed: () async {
-                    //       try {
-                    //         model.setBusy(true);
-                    //         await serialApi
-                    //             .checkSerialNumber(item.id)
-                    //             .then((ret) {
-                    //           if (ret) {
-                    //             routeTo(
-                    //                 context,
-                    //                 InnerPage(
-                    //                     itemid: item.id.toString(),
-                    //                     totalAmount: price.toString()));
-                    //             model.setBusy(false);
-                    //           } else {
-                    //             failDialog(context);
-                    //             model.setBusy(false);
-                    //           }
-                    //         });
-                    //       } catch (e) {
-                    //         model.setBusy(false);
-                    //         print(e.message);
-                    //       }
-                    //     },
-                    //   ),
-                    // ),
+                    verticalSpaceMedium,
+                    verticalSpaceMedium,
+                    ProgressHud(
+                      inAsyncCall: model.busy,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Column(
+                          children: [
+                            CustomText(
+                              'Easily, after you pay, you will receive a Buggy code on the same payment page or via email like this',
+                              fontSize: 13,
+                              bottomMargin: 10,
+                              // fontWeight: FontWeight.bold,
+                            ),
+                            CustomText(
+                              'xyqXsE8YTVSKS976WVSKS7',
+                              fontSize: 13,
+                              color: Styles.appBackground1,
+                              fontWeight: FontWeight.bold,
+                              bottomMargin: 10,
+                            ),
+                            Row(
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    showmore = !showmore;
+                                    setState(() {});
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 3, vertical: 3),
+                                    child: Row(
+                                      children: [
+                                        CustomText(
+                                          showmore ? 'Show less' : 'show more',
+                                          fontSize: 12,
+                                          color: Styles.colorLightBlue,
+                                        ),
+                                        CustomIcon(
+                                          icon: showmore
+                                              ? Icons.expand_more
+                                              : Icons.expand_less,
+                                          size: 25,
+                                          color: Styles.red,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            verticalSpaceSmall,
+                            showmore
+                                ? Column(
+                                    children: [
+                                      RichText(
+                                        textAlign: TextAlign.start,
+                                        text: customTextSpan(
+                                          text:
+                                              'If you receive the code, copy it and enter PUBG Wesite for shipping wedget from ',
+                                          context: context,
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.normal,
+                                          color: Styles.colorBlack,
+                                          children: <TextSpan>[
+                                            customTextSpan(
+                                                text: 'here',
+                                                context: context,
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.bold,
+                                                color: Styles.colorLightBlue,
+                                                onTap: () {
+                                                  _launchURL();
+                                                }),
+                                          ],
+                                        ),
+                                      ),
+                                      verticalSpaceSmall,
+                                      CustomText(
+                                        'Click on login if you have account already',
+                                        fontSize: 13,
+                                        color: Styles.colorBlack,
+                                        fontWeight: FontWeight.bold,
+                                        bottomMargin: 10,
+                                      ),
+                                      Container(
+                                          height: 200,
+                                          width: double.infinity,
+                                          child: Image.asset(
+                                            'images/login.png',
+                                            fit: BoxFit.fill,
+                                          )),
+                                      verticalSpaceSmall,
+                                      CustomText(
+                                        'Sign in or Create a new account',
+                                        fontSize: 13,
+                                        color: Styles.colorBlack,
+                                        fontWeight: FontWeight.bold,
+                                        bottomMargin: 10,
+                                      ),
+                                      CustomText(
+                                        'You can also use the special account on our website (but it is better that you set up a private account on your own)',
+                                        fontSize: 13,
+                                        color: Styles.colorBlack,
+                                        bottomMargin: 10,
+                                      ),
+                                      Row(
+                                        children: [
+                                          CustomText(
+                                            'Email: ',
+                                            fontSize: 13,
+                                            color: Styles.colorGrey,
+                                          ),
+                                          CustomText(
+                                            'q8uc.com@gmail.com',
+                                            fontSize: 13,
+                                            color: Styles.colorBlack,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          CustomText(
+                                            'Password: ',
+                                            fontSize: 13,
+                                            color: Styles.colorGrey,
+                                          ),
+                                          CustomText(
+                                            'q8uc.com',
+                                            fontSize: 13,
+                                            color: Styles.colorBlack,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ],
+                                      ),
+                                      verticalSpaceSmall,
+                                      Container(
+                                          height: 200,
+                                          width: double.infinity,
+                                          child: Image.asset(
+                                            'images/signin.png',
+                                            fit: BoxFit.fill,
+                                          )),
+                                      verticalSpaceMedium,
+                                      CustomText(
+                                        'Put your hands in the first box',
+                                        fontSize: 13,
+                                        color: Styles.colorBlack,
+                                        fontWeight: FontWeight.bold,
+                                        bottomMargin: 20,
+                                      ),
+                                      CustomText(
+                                        'Put the shipping code in the second box',
+                                        fontSize: 13,
+                                        color: Styles.colorBlack,
+                                        fontWeight: FontWeight.bold,
+                                        bottomMargin: 10,
+                                      ),
+                                      CustomText(
+                                        'How to put hands and code as in the illustration',
+                                        fontSize: 13,
+                                        color: Styles.colorBlack,
+                                        bottomMargin: 10,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      Container(
+                                          height: 200,
+                                          width: double.infinity,
+                                          child: Image.asset(
+                                            'images/illustration.png',
+                                            fit: BoxFit.fill,
+                                          )),
+                                      verticalSpaceSmall,
+                                      Center(
+                                        child: CustomText(
+                                          '!Congratulation, it has been shipped ',
+                                          fontSize: 13,
+                                          color: Styles.red,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      verticalSpaceMedium,
+                                    ],
+                                  )
+                                : SizedBox(),
+                          ],
+                        ),
+                      ),
+                    )
                   ],
                 ),
               ),

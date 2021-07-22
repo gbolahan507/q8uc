@@ -9,6 +9,7 @@ import 'package:q8uc/core/storage/local_storage.dart';
 import 'package:q8uc/core/view_models/items_vm.dart';
 import 'package:q8uc/core/view_models/serial_vm.dart';
 import 'package:q8uc/ui/screens/payment/payment3.dart';
+import 'package:q8uc/ui/screens/payment/receit_screen.dart';
 import 'package:q8uc/ui/styles/spacing.dart';
 import 'package:q8uc/ui/styles/styles.dart';
 import 'package:q8uc/ui/widgets/custom_button.dart';
@@ -22,6 +23,7 @@ import 'package:q8uc/utils/router.dart';
 import 'package:q8uc/utils/util.dart';
 import 'package:q8uc/core/model/coupon_model.dart';
 
+import '../../core/model/item.dart';
 import '../../main.dart';
 
 class BagScreen extends StatefulWidget {
@@ -64,8 +66,11 @@ class _BagScreenState extends State<BagScreen> {
 
   List noserial = [];
   List serial = [];
+  List id = [];
 
   int selected = 0;
+
+  List qty = [];
 
   var discount = 0.0;
 
@@ -401,14 +406,17 @@ class _BagScreenState extends State<BagScreen> {
                                                         15))));
                               } else {
                                 serial.clear();
-                                for (var i in allCartItems) {
-                                  serial.add(i.id);
+                                for (int i = 0; i < counts.length; i++) {
+                                  serial.add(allCartItems[i].id +
+                                      "-" +
+                                      counts[i].toString());
                                 }
+
                                 print(serial.join(','));
                                 Navigator.pop(context);
                                 routeTo(
                                     context,
-                                    InnerPage(
+                                    ReceitScreen(
                                         discount: discount.toStringAsFixed(2),
                                         itemid: serial.join(','),
                                         totalAmount:
@@ -628,6 +636,51 @@ class _BagScreenState extends State<BagScreen> {
                         color: Styles.colorWhite,
                       ),
                     ),
+                    Row(
+                      children: <Widget>[
+                        InkWell(
+                          onTap: () {
+                            if (counts[index] < 10 && counts[index] > 1) {
+                              setState(() {
+                                counts[index]--;
+                              });
+                              cummulative = cummulative -
+                                  double.parse(allCartItems[index].price);
+                            }
+                            setState(() {});
+                          },
+                          child: Icon(
+                            Icons.remove_circle,
+                            size: screenAwareSize(24, context),
+                            color: Styles.colorWhite,
+                          ),
+                        ),
+                        CustomText(
+                          counts[index].toString(),
+                          leftMargin: 10,
+                          rightMargin: 10,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Styles.colorWhite,
+                        ),
+                        InkWell(
+                          onTap: () {
+                            if (counts[index] < 9 && counts[index] > 0) {
+                              counts[index]++;
+                              cummulative = cummulative +
+                                  double.parse(allCartItems[index].price);
+                            }
+
+                            setState(() {});
+                          },
+                          child: Icon(
+                            Icons.add_circle,
+                            size: screenAwareSize(24, context),
+                            color: Styles.colorWhite,
+                          ),
+                        ),
+                      ],
+                    )
                   ],
                 ),
             ],

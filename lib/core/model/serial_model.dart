@@ -1,72 +1,79 @@
-// To parse this JSON data, do
-//
-//     final welcome = welcomeFromJson(jsonString);
 
 
-// Welcome welcomeFromJson(String str) => Welcome.fromJson(json.decode(str));
+import 'dart:convert';
 
-// String welcomeToJson(Welcome data) => json.encode(data.toJson());
+SerialResponse itemModelFromJson(String str) => SerialResponse.fromJson(json.decode(str));
 
-// class Welcome {
-//     Welcome({
-//         this.status,
-//         this.msg,
-//         this.data,
-//     });
+String itemModelToJson(SerialResponse data) => json.encode(data.toJson());
 
-//     int status;
-//     String msg;
-//     List<Datum> data;
-
-//     factory Welcome.fromJson(Map<String, dynamic> json) => Welcome(
-//         status: json["status"],
-//         msg: json["msg"],
-//         data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
-//     );
-
-//     Map<String, dynamic> toJson() => {
-//         "status": status,
-//         "msg": msg,
-//         "data": List<dynamic>.from(data.map((x) => x.toJson())),
-//     };
-// }
-
-class Datum {
-    Datum({
+class SerialResponse {
+    SerialResponse({
         this.status,
-        this.statusMessage,
-        this.productId,
-        this.serialNumber,
-        this.productName,
-        this.productImgPath,
-        this.productPrice,
+        this.msg,
+        this.data,
     });
 
     int status;
-    String statusMessage;
-    String productId;
-    String serialNumber;
-    String productName;
-    String productImgPath;
-    String productPrice;
+    String msg;
+    List<Datum> data;
 
-    factory Datum.fromJson(dynamic json) => Datum(
+    factory SerialResponse.fromJson(Map<String, dynamic> json) => SerialResponse(
         status: json["status"],
-        statusMessage: json["status_message"],
-        productId: json["product_id"],
-        serialNumber: json["serial_number"],
-        productName: json["product_name"],
-        productImgPath: json["product_img_path"],
-        productPrice: json["product_price"],
+        msg: json["msg"],
+        data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
     );
 
     Map<String, dynamic> toJson() => {
         "status": status,
-        "status_message": statusMessage,
+        "msg": msg,
+        "data": List<dynamic>.from(data.map((x) => x.toJson())),
+    };
+}
+
+class Datum {
+    Datum({
+        this.status,
+        this.productId,
+        this.statusForProduct,
+        this.serialNumbers,
+        this.productName,
+        this.productImgPath,
+        this.unitProductPrice,
+        this.totalProductPrice,
+        this.customerEmail,
+    });
+
+    int status;
+    String productId;
+    String statusForProduct;
+    List<String> serialNumbers;
+    String productName;
+    String productImgPath;
+    String unitProductPrice;
+    double totalProductPrice;
+    dynamic customerEmail;
+
+    factory Datum.fromJson(Map<String, dynamic> json) => Datum(
+        status: json["status"],
+        productId: json["product_id"],
+        statusForProduct: json["status_for_product"],
+        serialNumbers: List<String>.from(json["serial_numbers"].map((x) => x)),
+        productName: json["product_name"],
+        productImgPath: json["product_img_path"],
+        unitProductPrice: json["unit_product_price"],
+        totalProductPrice: json["total_product_price"].toDouble(),
+        customerEmail: json["customer_email"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "status": status,
         "product_id": productId,
-        "serial_number": serialNumber,
+        "status_for_product": statusForProduct,
+        "serial_numbers": List<dynamic>.from(serialNumbers.map((x) => x)),
         "product_name": productName,
         "product_img_path": productImgPath,
-        "product_price": productPrice,
+        "unit_product_price": unitProductPrice,
+        "total_product_price": totalProductPrice,
+        "customer_email": customerEmail,
     };
 }
