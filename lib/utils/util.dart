@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 abstract class Utils {
   static void offKeyboard(BuildContext context) {
@@ -87,6 +88,9 @@ abstract class Utils {
     } else
       return null;
   }
+
+    static formatPrice(double price) => '\$ ${price.toStringAsFixed(2)}';
+  static formatDate(DateTime date) => DateFormat.yMd().format(date);
 
   static Widget progress() {
     return Row(

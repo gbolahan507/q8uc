@@ -2,7 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:q8uc/core/api/get_serial.dart';
+import 'package:q8uc/core/api/pdf_api.dart';
+import 'package:q8uc/core/api/pdf_invoice_api.dart';
 import 'package:q8uc/core/model/item.dart';
+import 'package:q8uc/core/model/pdf_model/customer.dart';
+import 'package:q8uc/core/model/pdf_model/invoice.dart';
+import 'package:q8uc/core/model/pdf_model/supplier.dart';
 import 'package:q8uc/core/model/serial_model.dart';
 import 'package:q8uc/core/storage/local_storage.dart';
 import 'package:q8uc/core/view_models/serial_vm.dart';
@@ -41,12 +46,11 @@ class _ReceitScreenState extends State<ReceitScreen> {
   SerialResponse serialResponse;
 
   getCheckout(SerialResponse serialResponse) async {
-    return await serialApi.checkOut(
-      // '68',
-      // '191b07af5d388b6d4a33c4da6312eb2b-1,39dc5563dbc51751f968c6e0f847d901-2'
-      AppCache.getUser().custormerId.toString(),
-      widget.itemid,
-    );
+    return await serialApi.checkOut('68',
+        '191b07af5d388b6d4a33c4da6312eb2b-1,39dc5563dbc51751f968c6e0f847d901-2'
+        // AppCache.getUser().custormerId.toString(),
+        // widget.itemid,
+        );
   }
 
   @override
@@ -264,6 +268,101 @@ class _ReceitScreenState extends State<ReceitScreen> {
                                       }),
                                     ),
                                   ),
+                                  Row(
+                                    children: [
+                                      InkWell(
+                                        onTap: () async {
+                                          final date = DateTime.now();
+                                          final dueDate =
+                                              date.add(Duration(days: 7));
+
+                                          final invoice = Invoice(
+                                            supplier: Supplier(
+                                              name: 'Q8UC',
+                                              address:
+                                                  'Sarah Street 9, Beijing, Arab',
+                                              paymentInfo: 'https://q8uc.com',
+                                            ),
+                                            customer: Customer(
+                                              name: AppCache.getUser()
+                                                  .email
+                                                  .toString(),
+                                              address:
+                                                  'Apple Street, Cupertino, CA 95014',
+                                            ),
+                                            info: InvoiceInfo(
+                                              date: date,
+                                              dueDate: dueDate,
+                                              description: 'My description...',
+                                              number:
+                                                  '${DateTime.now().year}-9999',
+                                            ),
+                                            
+                                            items: [
+                                              InvoiceItem(
+                                                description: 'Coffee',
+                                                date: DateTime.now(),
+                                                quantity: 3,
+                                                vat: 0.19,
+                                                unitPrice: 5.99,
+                                              ),
+                                              InvoiceItem(
+                                                description: 'Water',
+                                                date: DateTime.now(),
+                                                quantity: 8,
+                                                vat: 0.19,
+                                                unitPrice: 0.99,
+                                              ),
+                                              InvoiceItem(
+                                                description: 'Orange',
+                                                date: DateTime.now(),
+                                                quantity: 3,
+                                                vat: 0.19,
+                                                unitPrice: 2.99,
+                                              ),
+                                              InvoiceItem(
+                                                description: 'Apple',
+                                                date: DateTime.now(),
+                                                quantity: 8,
+                                                vat: 0.19,
+                                                unitPrice: 3.99,
+                                              ),
+                                              InvoiceItem(
+                                                description: 'Mango',
+                                                date: DateTime.now(),
+                                                quantity: 1,
+                                                vat: 0.19,
+                                                unitPrice: 1.59,
+                                              ),
+                                              InvoiceItem(
+                                                description: 'Blue Berries',
+                                                date: DateTime.now(),
+                                                quantity: 5,
+                                                vat: 0.19,
+                                                unitPrice: 0.99,
+                                              ),
+                                              InvoiceItem(
+                                                description: 'Lemon',
+                                                date: DateTime.now(),
+                                                quantity: 4,
+                                                vat: 0.19,
+                                                unitPrice: 1.29,
+                                              ),
+                                            ],
+                                          );
+
+                                          final pdfFile =
+                                              await PdfInvoiceApi.generate(
+                                                  invoice);
+
+                                          PdfApi.openFile(pdfFile);
+                                        },
+                                        child: Container(
+                                            padding: EdgeInsets.all(10),
+                                            child: CustomText('Generate pdf')),
+                                      ),
+                                    ],
+                                  )
                                 ],
                               ),
                               SizedBox(height: screenAwareSize(20, context)),

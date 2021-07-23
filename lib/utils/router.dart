@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:q8uc/ui/constants/routes.dart';
-import 'package:q8uc/ui/screens/main_layout_screen.dart';
 import 'package:q8uc/ui/screens/navigation_screen.dart';
 import 'package:q8uc/ui/screens/signin_page.dart';
 import 'package:q8uc/ui/screens/signup_page.dart';
@@ -27,12 +26,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
         view: SignupScreen(),
         args: settings.arguments,
       );
-    case HomeScreenView:
-      return _getPageRoute(
-        routeName: settings.name,
-        view: const MainLayoutScreen(),
-        args: settings.arguments,
-      );
+
     case ButtomNavigationView:
       return _getPageRoute(
         routeName: settings.name,

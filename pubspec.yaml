@@ -61,6 +61,10 @@ dependencies:
   flutter_login_facebook: ^1.0.1
   connectivity: ^3.0.6
   speed_dial_fab: ^2.1.1
+  pdf: ^3.4.2
+  open_file: ^3.1.0
+  intl: ^0.17.0
+
 
 
 

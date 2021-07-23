@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
                   GoogleFonts.nunitoTextTheme(Theme.of(context).textTheme),
               primaryColor: Colors.white,
               visualDensity: VisualDensity.adaptivePlatformDensity),
-          home: SplashScreen(),
+          home: ReceitScreen(),
           builder: (BuildContext context, Widget child) => Navigator(
               key: locator<DialogService>().dialogNavigationKey,
               onGenerateRoute: (RouteSettings settings) =>
