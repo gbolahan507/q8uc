@@ -241,13 +241,21 @@ class _ReceitScreenState extends State<ReceitScreen> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  CustomText(
-                                                    sn.toString(),
-                                                    color:
-                                                        Styles.appBackground1,
-                                                    fontSize: 13,
-                                                    topMargin: 10,
-                                                  ),
+                                                  SelectableText(sn.toString(),
+                                                      style: TextStyle(
+                                                          color:
+                                                              Styles.colorRed,
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                      cursorColor: Colors.red,
+                                                      showCursor: true,
+                                                      toolbarOptions:
+                                                          ToolbarOptions(
+                                                              copy: true,
+                                                              selectAll: true,
+                                                              cut: false,
+                                                              paste: false)),
                                                 ],
                                               )),
                                             ],

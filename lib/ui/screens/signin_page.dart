@@ -6,6 +6,7 @@ import 'package:q8uc/ui/screens/signup_page.dart';
 import 'package:q8uc/ui/styles/spacing.dart';
 import 'package:q8uc/ui/styles/styles.dart';
 import 'package:q8uc/ui/widget2/custom_button.dart';
+import 'package:q8uc/ui/widgets/custom_button.dart';
 import 'package:q8uc/ui/widgets/custom_text_widget.dart';
 import 'package:q8uc/ui/widgets/custom_textfield.dart';
 import 'package:q8uc/ui/widgets/custom_textspan_widget.dart';
@@ -99,7 +100,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             verticalSpaceMedium,
                             verticalSpaceMedium,
                             CustomButton(
+                              height: 50,
                               title: 'Sign In',
+                                buttonColor: Styles.colorLightBlue,
                               onPressed: () {
                                 final Map<String, String> data = {
                                   "email": email,

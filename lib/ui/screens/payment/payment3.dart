@@ -12,7 +12,7 @@ import 'package:q8uc/ui/widgets/custom_text_widget.dart';
 import 'package:q8uc/ui/widgets/size_calculator.dart';
 import 'package:q8uc/utils/router.dart';
 
-class InnerPage extends StatelessWidget {
+class PaymentPage extends StatelessWidget {
   final ItemModel item;
   final String itemid;
   final String totalAmount, discount;
@@ -20,7 +20,7 @@ class InnerPage extends StatelessWidget {
   final List<ItemModel> allCartItems = <ItemModel>[];
   List serial = [];
 
-  InnerPage({this.item, this.itemid, this.totalAmount, this.discount});
+  PaymentPage({this.item, this.itemid, this.totalAmount, this.discount});
 
   @override
   Widget build(BuildContext context) {

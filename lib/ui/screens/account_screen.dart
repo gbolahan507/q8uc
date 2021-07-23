@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:q8uc/core/view_models/auth_vm.dart';
 import 'package:q8uc/ui/screens/order_history.dart';
-import 'package:q8uc/ui/screens/payment/profile_screen.dart';
+import 'package:q8uc/ui/screens/profile_screen.dart';
 import 'package:q8uc/ui/styles/spacing.dart';
 import 'package:q8uc/ui/styles/styles.dart';
 import 'package:q8uc/ui/widgets/connect.dart';

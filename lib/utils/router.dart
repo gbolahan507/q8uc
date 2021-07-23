@@ -8,28 +8,23 @@ import 'package:q8uc/ui/screens/signup_page.dart';
 import 'package:q8uc/ui/screens/splash_screen.dart';
 import 'package:q8uc/ui/screens/confirm_gmail_sign_up.dart';
 
-
-
-
 Route<dynamic> generateRoute(RouteSettings settings) {
-
-
   switch (settings.name) {
     case SplashView:
       return _getPageRoute(
         routeName: settings.name,
-        view:  SplashScreen(),
+        view: SplashScreen(),
       );
     case LoginView:
       return _getPageRoute(
         routeName: settings.name,
-        view:  LoginScreen(),
+        view: LoginScreen(),
       );
 
     case SignupView:
       return _getPageRoute(
         routeName: settings.name,
-        view:  SignupScreen(),
+        view: SignupScreen(),
         args: settings.arguments,
       );
     case HomeScreenView:
@@ -41,13 +36,13 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case ButtomNavigationView:
       return _getPageRoute(
         routeName: settings.name,
-        view:  ButtomNavScreen(),
+        view: ButtomNavScreen(),
         args: settings.arguments,
       );
     case ConfirmGmailView:
       return _getPageRoute(
         routeName: settings.name,
-        view:  ConfirmSignUp(),
+        view: ConfirmGmailSignUp(),
         args: settings.arguments,
       );
     // case AddBusinessDoneView:
@@ -73,7 +68,6 @@ PageRoute<dynamic> _getPageRoute({String routeName, Widget view, Object args}) {
       settings: RouteSettings(name: routeName, arguments: args),
       builder: (_) => view);
 }
-
 
 void routeTo(BuildContext context, Widget view, {bool dialog = false}) {
   Navigator.push<void>(

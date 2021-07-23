@@ -9,8 +9,8 @@ import 'package:q8uc/ui/widgets/size_calculator.dart';
 import 'package:q8uc/utils/base_view.dart';
 import 'package:q8uc/utils/progressHud.dart';
 
-class ConfirmSignUp extends StatelessWidget {
-  const ConfirmSignUp({Key key}) : super(key: key);
+class ConfirmGmailSignUp extends StatelessWidget {
+  const ConfirmGmailSignUp({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

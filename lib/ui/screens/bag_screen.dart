@@ -66,15 +66,8 @@ class _BagScreenState extends State<BagScreen> {
 
   List noserial = [];
   List serial = [];
-  List id = [];
-
-  int selected = 0;
-
-  List qty = [];
 
   var discount = 0.0;
-
-  final name = 'come';
 
   @override
   void initState() {
@@ -94,7 +87,6 @@ class _BagScreenState extends State<BagScreen> {
         totalAmount = totalAmount + (double.parse(model.price) * eachCount);
         cummulative = totalAmount;
       });
-      // print(totalAmount.toString());
     }
 
     super.initState();
@@ -416,7 +408,7 @@ class _BagScreenState extends State<BagScreen> {
                                 Navigator.pop(context);
                                 routeTo(
                                     context,
-                                    ReceitScreen(
+                                    PaymentPage(
                                         discount: discount.toStringAsFixed(2),
                                         itemid: serial.join(','),
                                         totalAmount:

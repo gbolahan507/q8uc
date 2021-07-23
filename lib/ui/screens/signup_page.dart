@@ -3,15 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:q8uc/core/view_models/auth_vm.dart';
 import 'package:q8uc/core/view_models/connectivity_vm.dart';
+import 'package:q8uc/locator.dart';
+import 'package:q8uc/ui/constants/routes.dart';
 import 'package:q8uc/ui/screens/signin_page.dart';
 import 'package:q8uc/ui/styles/spacing.dart';
 import 'package:q8uc/ui/styles/styles.dart';
 import 'package:q8uc/ui/widget2/custom_button.dart';
+import 'package:q8uc/ui/widgets/custom_button.dart';
 import 'package:q8uc/ui/widgets/custom_text_widget.dart';
 import 'package:q8uc/ui/widgets/custom_textfield.dart';
 import 'package:q8uc/ui/widgets/custom_textspan_widget.dart';
 import 'package:q8uc/ui/widgets/size_calculator.dart';
 import 'package:q8uc/utils/base_view.dart';
+import 'package:q8uc/utils/navigator.dart';
 import 'package:q8uc/utils/progressHud.dart';
 import 'package:q8uc/utils/util.dart';
 
@@ -27,6 +31,7 @@ class _SignupScreenState extends State<SignupScreen> {
   var _emailController = TextEditingController();
   var _passwordController = TextEditingController();
   var _phoneController = TextEditingController();
+  NavigationService navigate = locator<NavigationService>();
 
   bool isApiCallProcess = false;
 
@@ -153,6 +158,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               verticalSpaceMedium,
                               verticalSpaceMedium,
                               CustomButton(
+                                height: 50,
                                 title: 'Sign Up',
                                 fontSize: 14,
                                 buttonColor: Styles.colorLightBlue,
@@ -178,7 +184,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               verticalSpaceSmall,
                               GoogleAuthButton(
                                 onPressed: () {
-                                  model.googleSignUp();
+                                  model.googleSignUp(context);
                                 },
                                 // ),
                                 // },
@@ -217,11 +223,12 @@ class _SignupScreenState extends State<SignupScreen> {
                                         fontWeight: FontWeight.bold,
                                         color: Styles.colorLemon,
                                         onTap: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      LoginScreen()));
+                                          // Navigator.push(
+                                          //     context,
+                                          //     MaterialPageRoute(
+                                          //         builder: (context) =>
+                                          //             LoginScreen()));
+                                          navigate.navigateTo(LoginView);
                                         }),
                                   ],
                                 ),

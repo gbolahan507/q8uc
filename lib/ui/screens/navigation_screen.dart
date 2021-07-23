@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:q8uc/ui/screens/account_screen.dart';
 import 'package:q8uc/ui/screens/categories_screen.dart';
 import 'package:q8uc/ui/screens/usage_screen.dart';
@@ -19,18 +20,20 @@ class _ButtomNavScreenState extends State<ButtomNavScreen> {
   ];
 
   int _selectedIndex = 0;
-  
 
   ValueNotifier<int> cartCount;
 
   Future<bool> _onWillPop() async {
     print("on will pop");
 
-    if (_selectedIndex == 0) return true;
+    if (_selectedIndex == 0)
+     return true;
+
     setState(() {
       _selectedIndex = 0;
       print(_selectedIndex);
     });
+
     return false;
   }
 
@@ -53,20 +56,17 @@ class _ButtomNavScreenState extends State<ButtomNavScreen> {
               unselectedLabelStyle: TextStyle(fontWeight: FontWeight.w600),
               items: [
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.home),
-                    label: 
-                      'Home',
-                    ),
+                  icon: Icon(Icons.home),
+                  label: 'Home',
+                ),
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.history),
-                    label: 
-                      'Usage',
-                    ),
+                  icon: Icon(Icons.history),
+                  label: 'Usage',
+                ),
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.person),
-                    label: 
-                      'Account',
-                    ),
+                  icon: Icon(Icons.person),
+                  label: 'Account',
+                ),
               ])),
     );
   }

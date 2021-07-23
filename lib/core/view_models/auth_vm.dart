@@ -5,6 +5,7 @@ import 'package:q8uc/core/api/auth_api.dart';
 import 'package:q8uc/core/model/login_model.dart';
 import 'package:q8uc/core/storage/local_storage.dart';
 import 'package:q8uc/ui/constants/routes.dart';
+import 'package:q8uc/ui/screens/navigation_screen.dart';
 import 'package:q8uc/ui/widgets/snackbar.dart';
 import 'package:q8uc/utils/custom_exception.dart';
 
@@ -25,7 +26,7 @@ class AuthViewModel extends BaseModel {
     try {
       userModel = await _authApi.loginUser(data);
       AppCache.saveUser(userModel);
-      navigate.navigateTo(ButtomNavigationView);
+      navigate.routeToReplace(context, ButtomNavScreen());
       setBusy(false);
       notifyListeners();
     } on CustomException catch (e) {
@@ -64,7 +65,7 @@ class AuthViewModel extends BaseModel {
     }
   }
 
-  Future<bool> googleSignUp() async {
+  Future<bool> googleSignUp(BuildContext context) async {
     bool ret;
     try {
       await _authApi.googleSignUp();
@@ -88,14 +89,13 @@ class AuthViewModel extends BaseModel {
     try {
       userModel = await _authApi.confirmGmail(data);
       AppCache.saveUser(userModel);
-      navigate.navigateTo(ButtomNavigationView);
+      navigate.routeToReplace(context, ButtomNavScreen());
       setBusy(false);
       notifyListeners();
     } on CustomException catch (e) {
       error2 = e.message;
       setBusy(false);
       showSnackBar(context, 'Error', 'Incorrect Username or password');
-      // showErrorDialog(e);
       notifyListeners();
     }
   }
@@ -117,9 +117,9 @@ class AuthViewModel extends BaseModel {
   }
 
   logout() async {
-     _authApi.logOut();
-     navigate.navigateTo(SignupView);
-     SystemNavigator.pop();
+    _authApi.logOut();
+    navigate.navigateTo(SignupView);
+    SystemNavigator.pop();
 
     notifyListeners();
   }

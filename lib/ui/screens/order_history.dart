@@ -254,7 +254,8 @@ class _OrderHistoryState extends State<OrderHistory> {
               verticalSpaceSmall,
               Row(
                 children: [
-                  SelectableText('$serialNumber',
+                  SelectableText(
+                    '$serialNumber',
                       style: TextStyle(
                           color: Styles.colorRed,
                           fontSize: 15,

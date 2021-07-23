@@ -8,21 +8,19 @@ import 'base_vm.dart';
 
 class StartUpViewModel extends BaseModel {
   bool hasLoggedIn = false;
-   final  _auth = FirebaseAuth.instance;
-   bool get isSignedIn => _auth.currentUser != null;
-
-
+  final _auth = FirebaseAuth.instance;
+  bool get isSignedIn => _auth.currentUser != null;
 
   Future<void> isLoggedIn() async {
     final UserModel token = AppCache.getUser();
-    if (token != null ) {
+    if (token != null) {
       hasLoggedIn = true;
       Future<void>.delayed(const Duration(seconds: 2), () {
-        navigate.navigateToReplacing(ButtomNavigationView);
+        navigate.navigateToReplacement(ButtomNavigationView);
       });
     } else
       Future<void>.delayed(const Duration(seconds: 2), () {
-        navigate.navigateToReplacing(SignupView);
+        navigate.navigateToReplacement(SignupView);
       });
 
     notifyListeners();
@@ -47,7 +45,4 @@ class StartUpViewModel extends BaseModel {
           return LoginScreen();
         });
   }
-
-
-
 }

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:q8uc/ui/screens/bag_screen.dart';
 import 'package:q8uc/ui/screens/payment/receit_screen.dart';
+import 'package:q8uc/ui/screens/signin_page.dart';
+import 'package:q8uc/ui/screens/signup_page.dart';
 import 'package:q8uc/ui/screens/splash_screen.dart';
 import 'package:q8uc/utils/dialog_manager.dart';
 import 'package:q8uc/utils/dialog_service.dart';
